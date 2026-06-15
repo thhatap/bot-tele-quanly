@@ -1,0 +1,34 @@
+{
+  "-1003957554843": {
+    "active": true,
+    "text": "🎉 <b>CHÀO MỪNG THÀNH VIÊN MỚI!</b> 🎉\n\n🔥 Chào mừng {name} đã hạ cánh xuống Group.\n🎬 Chúc đại ca có những giây phút giải trí cực mạnh!",
+    "captcha": {
+      "enabled": true,
+      "kickAfter": 300,
+      "verified": {
+        "6250994068": 1781531520066
+      }
+    }
+  },
+  "groups": [
+    {
+      "id": -1004302222483,
+      "title": "Nhóm Chat Ngõ 18",
+      "username": null
+    },
+    {
+      "id": -5136788107,
+      "title": "n",
+      "username": null
+    }
+  ],
+  "-1004302222483": {
+    "active": true,
+    "text": "🎉 <b>CHÀO MỪNG THÀNH VIÊN MỚI!</b> 🎉\n\n🔥 Chào mừng {name} đã hạ cánh xuống Group.\n🎬 Chúc đại ca có những giây phút giải trí cực mạnh!",
+    "captcha": {
+      "enabled": true,
+      "kickAfter": 300,
+      "verified": {}
+    }
+  }
+}
