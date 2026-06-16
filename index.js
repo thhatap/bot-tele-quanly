@@ -1,5 +1,3 @@
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
 // Bùa mở cổng cho Render & UptimeRobot
 const http = require('http');
 const port = process.env.PORT || 10000; // Để Render tự động điền lỗ, đéo xài 7860 nữa
@@ -35,21 +33,7 @@ const autoClearHandler = require('./handlers/autoClear');
 const autoKickBotsHandler = require('./handlers/autoKickBots');
 const staffHandler = require('./handlers/staff');
 
-// --- BẮT ĐẦU BÙA TỐI THƯỢNG CHỐNG ĐỨT KẾT NỐI HUGGING FACE ---
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Tắt mẹ kiểm duyệt chứng chỉ bảo mật chặn ngang
-const https = require('https');
-
-// Chế riêng một ống thở ép 100% chạy IPv4 và không bao giờ tự ngắt
-const agent = new https.Agent({ 
-    keepAlive: true, 
-    family: 4 
-});
-
-// Nhét thẳng ống thở vào họng con bot
-const bot = new Telegraf('8894665369:AAGEyZrRoD5xIcXabhnznmqarv4BpnnVtwU', {
-    telegram: { agent: agent }
-});
-// --- KẾT THÚC BÙA ---
+const bot = new Telegraf('8894665369:AAGEyZrRoD5xIcXabhnznmqarv4BpnnVtwU');
 const dbPath = './database.json';
 
 function loadDB() {
