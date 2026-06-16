@@ -127,6 +127,4 @@ bot.catch((err, ctx) => {
     console.log(`Lỗi ngầm: ${ctx.updateType}`, err);
 });
 
-bot.launch();
-
 bot.launch().then(() => console.log("Bot đã sẵn sàng bú tin nhắn!"));
