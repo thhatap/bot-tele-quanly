@@ -1,3 +1,14 @@
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+// Bùa mở cổng cho Render & UptimeRobot
+const http = require('http');
+const port = process.env.PORT || 10000; // Để Render tự động điền lỗ, đéo xài 7860 nữa
+
+http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Bot Admin Đang Sống Nhăn Răng!');
+}).listen(port, '0.0.0.0', () => console.log(`Đã mở lỗ ${port} cho UptimeRobot chọc!`));
+
 const { Telegraf } = require('telegraf');
 const fs = require('fs');
 const path = require('path');
@@ -24,7 +35,21 @@ const autoClearHandler = require('./handlers/autoClear');
 const autoKickBotsHandler = require('./handlers/autoKickBots');
 const staffHandler = require('./handlers/staff');
 
-const bot = new Telegraf('8894665369:AAGEyZrRoD5xIcXabhnznmqarv4BpnnVtwU');
+// --- BẮT ĐẦU BÙA TỐI THƯỢNG CHỐNG ĐỨT KẾT NỐI HUGGING FACE ---
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Tắt mẹ kiểm duyệt chứng chỉ bảo mật chặn ngang
+const https = require('https');
+
+// Chế riêng một ống thở ép 100% chạy IPv4 và không bao giờ tự ngắt
+const agent = new https.Agent({ 
+    keepAlive: true, 
+    family: 4 
+});
+
+// Nhét thẳng ống thở vào họng con bot
+const bot = new Telegraf('8894665369:AAGEyZrRoD5xIcXabhnznmqarv4BpnnVtwU', {
+    telegram: { agent: agent }
+});
+// --- KẾT THÚC BÙA ---
 const dbPath = './database.json';
 
 function loadDB() {
@@ -122,3 +147,4 @@ bot.launch();
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
+bot.launch().then(() => console.log("Bot đã sẵn sàng bú tin nhắn!"));
