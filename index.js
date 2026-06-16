@@ -33,7 +33,7 @@ const autoClearHandler = require('./handlers/autoClear');
 const autoKickBotsHandler = require('./handlers/autoKickBots');
 const staffHandler = require('./handlers/staff');
 
-const bot = new Telegraf('8894665369:AAGEyZrRoD5xIcXabhnznmqarv4BpnnVtwU');
+const bot = new Telegraf('8894665369:AAHvAKH8ETkDRw0LZjz5Fg9ib7VXQ5090g8');
 const dbPath = './database.json';
 
 function loadDB() {
