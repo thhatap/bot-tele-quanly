@@ -90,4 +90,78 @@ module.exports = (bot, { loadDB, saveDB }) => {
     bot.on('left_chat_member', async (ctx) => {
         ctx.deleteMessage().catch(() => {});
     });
+
+    // ========= HANDLER MỚI CHO TELEGRAM API 5.0+ =========
+    bot.on('chat_member', async (ctx) => {
+        const chatMember = ctx.chatMember;
+
+        if (chatMember.new_chat_member.status !== 'member') {
+            return;
+        }
+
+        const chatId = ctx.chat.id.toString();
+        const newUser = chatMember.new_chat_member.user;
+
+        if (newUser.is_bot) {
+            console.log(`[Welcome-chat_member] Bot ${newUser.id} được thêm, bỏ qua`);
+            return;
+        }
+
+        const db = loadDB();
+
+        if (!db[chatId]) {
+            console.log(`[Welcome-chat_member] Nhóm ${chatId} chưa có cấu hình`);
+            return;
+        }
+
+        if (!db[chatId].active) {
+            console.log(`[Welcome-chat_member] Nhóm ${chatId} đang tắt welcome`);
+            return;
+        }
+
+        const userName = newUser.first_name || "Đại ca";
+        const userMention = `<a href="tg://user?id=${newUser.id}">${userName}</a>`;
+        const welcomeMsg = (db[chatId].text || '🎉 Chào mừng {name}!').replace(/{name}/g, userMention);
+
+        const replyMarkup = {
+            inline_keyboard: [
+                [
+                    { text: '🎬 Vào Kênh Video', url: 'https://t.me/Thay_Link_Kenh_Vao_Day' },
+                    { text: '💬 Nhắn Admin', url: 'https://t.me/Thay_User_Name_Vao_Day' }
+                ]
+            ]
+        };
+
+        const captchaEnabled = db[chatId].captcha && db[chatId].captcha.enabled;
+
+        if (captchaEnabled) {
+            try {
+                await ctx.telegram.restrictChatMember(chatId, newUser.id, {
+                    can_send_messages: false,
+                    can_send_media_messages: false,
+                    can_send_polls: false,
+                    can_send_other_messages: false,
+                    can_add_web_page_previews: false
+                });
+            } catch (e) {
+                console.error(`[Welcome-chat_member] Lỗi restrict:`, e.message);
+            }
+
+            replyMarkup.inline_keyboard.push([
+                { text: '✅ Xác minh để chat', callback_data: `welcome_captcha:${chatId}:${newUser.id}` }
+            ]);
+
+            scheduleCaptchaKick(bot, chatId, newUser.id, userName, db[chatId].captcha.kickAfter || 300);
+        }
+
+        try {
+            await ctx.replyWithHTML(welcomeMsg, {
+                reply_markup: replyMarkup,
+                disable_web_page_preview: true
+            });
+            console.log(`[Welcome-chat_member] Đã gửi lời chào cho ${userName} (${newUser.id})`);
+        } catch (err) {
+            console.error(`[Welcome-chat_member] Lỗi gửi lời chào:`, err.message);
+        }
+    });
 };

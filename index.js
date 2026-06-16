@@ -33,7 +33,17 @@ const autoClearHandler = require('./handlers/autoClear');
 const autoKickBotsHandler = require('./handlers/autoKickBots');
 const staffHandler = require('./handlers/staff');
 
+// ========= DEBUG HANDLERS =========
 const bot = new Telegraf('8894665369:AAHvAKH8ETkDRw0LZjz5Fg9ib7VXQ5090g8');
+
+bot.on('*', (ctx) => {
+    console.log('📩 UPDATE NHẬN:', ctx.updateType, '| SubTypes:', ctx.updateSubTypes);
+});
+
+bot.on('chat_member', (ctx) => {
+    console.log('👥 CHAT_MEMBER:', JSON.stringify(ctx.chatMember, null, 2));
+});
+
 const dbPath = './database.json';
 
 function loadDB() {
@@ -127,4 +137,6 @@ bot.catch((err, ctx) => {
     console.log(`Lỗi ngầm: ${ctx.updateType}`, err);
 });
 
-bot.launch().then(() => console.log("Bot đã sẵn sàng bú tin nhắn!"));
+bot.launch({
+    allowedUpdates: ['message', 'chat_member', 'my_chat_member', 'callback_query']
+}).then(() => console.log("Bot đã sẵn sàng bú tin nhắn!"));
