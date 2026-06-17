@@ -17,7 +17,14 @@ module.exports = (bot, { loadDB }) => {
             try {
                 await ctx.telegram.banChatMember(chatId, botMember.id);
                 await ctx.telegram.unbanChatMember(chatId, botMember.id);
-                await ctx.replyWithHTML(`🤖 <b>ĐÃ KICK BOT</b>\n\nBot <a href="tg://user?id=${botMember.id}">${botMember.first_name || botMember.username || 'Bot'}</a> đã bị kick khỏi group!`);
+                const botMention = `<a href="tg://user?id=${botMember.id}">${botMember.first_name || botMember.username || 'Bot'}</a>`;
+                await ctx.replyWithHTML(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   🤖 KICK BOT              <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n\n' +
+                    `${botMention} đã bị kick khỏi group!\n\n` +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
             } catch (e) {
                 console.error('Auto kick bots error:', e.message);
             }

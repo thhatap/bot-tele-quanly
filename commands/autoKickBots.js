@@ -1,7 +1,7 @@
 module.exports = (bot, { loadDB, saveDB }) => {
     bot.command('autokickbots', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply('⚠️ Lệnh này chỉ dùng được trong nhóm!');
+            return ctx.replyWithHTML('⚠️ <b>Lệnh này chỉ dùng được trong nhóm!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -13,10 +13,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
             const isAnonymous = ctx.message.sender_chat && ctx.message.sender_chat.id === ctx.chat.id;
 
             if (!isAdmin && !isAnonymous) {
-                return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+                return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
             }
         } catch (e) {
-            return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+            return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
         }
 
         ctx.deleteMessage().catch(() => {});
@@ -48,22 +48,39 @@ module.exports = (bot, { loadDB, saveDB }) => {
         if (cmd === 'on') {
             db[chatId].autokickbots.enabled = true;
             saveDB(db);
-            return ctx.replyWithHTML('✅ <b>ĐÃ BẬT</b> Auto Kick Bots!');
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   ✅ BẬT AUTO KICK BOTS    <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                '<b>║</b> Tự động kick bot khi vào nhóm! <b>║</b>\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
         if (cmd === 'off') {
             db[chatId].autokickbots.enabled = false;
             saveDB(db);
-            return ctx.replyWithHTML('🔴 <b>ĐÃ TẮT</b> Auto Kick Bots!');
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔴 TẮT AUTO KICK BOTS   <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                '<b>║</b> Auto kick bot đã bị tắt! <b>║</b>\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
-        const status = db[chatId].autokickbots.enabled ? '🟢 ĐANG BẬT' : '🔴 ĐANG TẮT';
+        const status = db[chatId].autokickbots.enabled ? '🟢 BẬT' : '🔴 TẮT';
 
-        const helpText = `<blockquote><b>🤖 BẢNG ĐIỀU KHIỂN AUTO KICK BOTS</b>\n` +
-            `Trạng thái: <b>${status}</b>\n〰️〰️〰️〰️〰️〰️\n` +
-            `🟢 <code>/autokickbots on</code> : Bật Auto Kick Bots.\n` +
-            `🔴 <code>/autokickbots off</code> : Tắt Auto Kick Bots.\n\n` +
-            `Tác dụng: Kick toàn bộ bot khi có bot mới vào group.</blockquote>`;
+        const helpText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   🤖 AUTO KICK BOTS        <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>📌 Trạng thái:</b> <code>${status}</code>\n\n` +
+            '<b>═══ HƯỚNG DẪN ═══</b>\n' +
+            '<code>/autokickbots on</code> - Bật Auto Kick Bots\n' +
+            '<code>/autokickbots off</code> - Tắt Auto Kick Bots\n\n' +
+            '<b>Tác dụng:</b> Kick toàn bộ bot khi có bot mới vào group.\n\n' +
+            '<b>╚══════════════════════════════╝</b>';
 
         ctx.replyWithHTML(helpText);
     });

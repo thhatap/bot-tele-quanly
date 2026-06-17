@@ -1,7 +1,7 @@
 module.exports = (bot, { loadDB, saveDB }) => {
     bot.command('mute', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply('⚠️ Lệnh này chỉ dùng được trong nhóm!');
+            return ctx.replyWithHTML('⚠️ <b>Lệnh này chỉ dùng được trong nhóm!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -12,10 +12,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
             const isAdmin = admins.some(admin => admin.user.id === fromId);
             const isAnonymous = ctx.message.sender_chat && ctx.message.sender_chat.id === ctx.chat.id;
             if (!isAdmin && !isAnonymous) {
-                return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+                return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
             }
         } catch (e) {
-            return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+            return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
         }
 
         let targetUserId = null;
@@ -31,12 +31,19 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 targetUserId = parseInt(userIdMatch[1]);
                 targetUserName = `ID: ${targetUserId}`;
             } else {
-                return ctx.reply('⚠️ Cách dùng:\n/mute (reply tin nhắn)\nhoặc\n/mute [user_id]');
+                return ctx.replyWithHTML(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   ⚠️ CÁCH SỬ DỤNG LỆNH     <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n' +
+                    '<b>║</b> <code>/mute</code> (reply tin nhắn) <b>║</b>\n' +
+                    '<b>║</b> <code>/mute [user_id]</code> <b>║</b>\n' +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
             }
         }
 
         if (targetUserId === fromId) {
-            return ctx.reply('⚠️ Bạn không thể tự mute chính mình!');
+            return ctx.replyWithHTML('⚠️ <b>Bạn không thể tự mute chính mình!</b>');
         }
 
         let db = loadDB();
@@ -65,22 +72,30 @@ module.exports = (bot, { loadDB, saveDB }) => {
             db[chatId].moderation.muted[targetUserId] = true;
             saveDB(db);
             const userMention = `<a href="tg://user?id=${targetUserId}">${targetUserName}</a>`;
-            await ctx.replyWithHTML(`🔇 <b>ĐÃ MUTE</b>\n\nNgười dùng ${userMention} đã bị mute vĩnh viễn.`, {
-                reply_markup: {
-                    inline_keyboard: [[
-                        { text: '🔊 Gỡ Mute', callback_data: `unmute:${chatId}:${targetUserId}` }
-                    ]]
+            await ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔇 ĐÃ MUTE               <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n\n' +
+                `<b>👤 Người dùng:</b> ${userMention}\n` +
+                '<b>⏱️ Thời gian:</b> <code>VĨNH VIỄN</code>\n\n' +
+                '<b>╚══════════════════════════════╝</b>',
+                {
+                    reply_markup: {
+                        inline_keyboard: [[
+                            { text: '🔊 Gỡ Mute', callback_data: `unmute:${chatId}:${targetUserId}` }
+                        ]]
+                    }
                 }
-            });
+            );
         } catch (e) {
             console.error('Mute error:', e.message);
-            await ctx.reply('❌ Không thể mute người dùng này. Kiểm tra lại quyền của bot!');
+            await ctx.replyWithHTML('❌ <b>Không thể mute người dùng này.</b>\nKiểm tra lại quyền của bot!');
         }
     });
 
     bot.command('unmute', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply('⚠️ Lệnh này chỉ dùng được trong nhóm!');
+            return ctx.replyWithHTML('⚠️ <b>Lệnh này chỉ dùng được trong nhóm!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -91,10 +106,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
             const isAdmin = admins.some(admin => admin.user.id === fromId);
             const isAnonymous = ctx.message.sender_chat && ctx.message.sender_chat.id === ctx.chat.id;
             if (!isAdmin && !isAnonymous) {
-                return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+                return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
             }
         } catch (e) {
-            return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+            return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
         }
 
         let targetUserId = null;
@@ -110,7 +125,14 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 targetUserId = parseInt(userIdMatch[1]);
                 targetUserName = `ID: ${targetUserId}`;
             } else {
-                return ctx.reply('⚠️ Cách dùng:\n/unmute (reply tin nhắn)\nhoặc\n/unmute [user_id]');
+                return ctx.replyWithHTML(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   ⚠️ CÁCH SỬ DỤNG LỆNH     <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n' +
+                    '<b>║</b> <code>/unmute</code> (reply tin nhắn) <b>║</b>\n' +
+                    '<b>║</b> <code>/unmute [user_id]</code> <b>║</b>\n' +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
             }
         }
 
@@ -142,10 +164,17 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 saveDB(db);
             }
             const userMention = `<a href="tg://user?id=${targetUserId}">${targetUserName}</a>`;
-            await ctx.replyWithHTML(`🔊 <b>ĐÃ GỠ MUTE</b>\n\nNgười dùng ${userMention} đã được gỡ mute.`);
+            await ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔊 ĐÃ GỠ MUTE            <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n\n' +
+                `<b>👤 Người dùng:</b> ${userMention}\n` +
+                '<b>✅ Trạng thái:</b> <code>Đã được gỡ mute</code>\n\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         } catch (e) {
             console.error('Unmute error:', e.message);
-            await ctx.reply('❌ Không thể gỡ mute người dùng này. Kiểm tra lại quyền của bot!');
+            await ctx.replyWithHTML('❌ <b>Không thể gỡ mute người dùng này.</b>\nKiểm tra lại quyền của bot!');
         }
     });
 };

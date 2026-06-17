@@ -4,7 +4,7 @@ const port = process.env.PORT || 10000; // Để Render tự động điền l�
 
 http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Bot Admin Đang Sống Nhăn Răng!');
+    res.end('Bot Admin đã hoạt động!');
 }).listen(port, '0.0.0.0', () => console.log(`Đã mở lỗ ${port} cho UptimeRobot chọc!`));
 
 const { Telegraf } = require('telegraf');

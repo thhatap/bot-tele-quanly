@@ -78,14 +78,30 @@ async function handleAutoModeration(bot, ctx, db, chatId, targetUserId, targetUs
     let replyText = '';
 
     if (antilink.mode === 'delete') {
-        replyText = `🗑️ <b>ĐÃ XÓA TIN NHẮN CHỨA LINK</b>\n\nNgười dùng ${userMention} không được phép gửi link!`;
+        replyText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   🗑️ XÓA TIN NHẮN         <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `${userMention} không được phép gửi link!\n\n` +
+            '<b>╚══════════════════════════════╝</b>';
     } else if (antilink.mode === 'warn') {
-        replyText = `⚠️ <b>ANTI-LINK WARN</b>\n\n👤 Người dùng: ${userMention}\n📝 Lý do: Gửi link bị cấm\n🔢 Warn: <b>${db[chatId].moderation.warns[targetUserId].length}/3</b>`;
-        if (autoMuted) {
-            replyText += `\n\n🔇 Đã <b>MUTE TỰ ĐỘNG</b> vì đạt 3 warns!`;
-        }
+        replyText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   ⚠️ ANTI-LINK WARN       <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>👤 Người dùng:</b> ${userMention}\n` +
+            '<b>📝 Lý do:</b> Gửi link bị cấm\n' +
+            `<b>🔢 Warn:</b> <code>${db[chatId].moderation.warns[targetUserId].length}/3</code>\n\n` +
+            (autoMuted ? '<b>🔇 Đã MUTE TỰ ĐỘNG vì đạt 3 warns!</b>\n\n' : '') +
+            '<b>╚══════════════════════════════╝</b>';
     } else if (antilink.mode === 'mute') {
-        replyText = `🔇 <b>ĐÃ MUTE TỰ ĐỘNG</b>\n\nNgười dùng ${userMention} vì gửi link bị cấm!\n⏱️ Thời gian: ${antilink.muteDuration / 60} phút`;
+        replyText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   🔇 ĐÃ MUTE TỰ ĐỘNG     <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `${userMention} vì gửi link bị cấm!\n` +
+            `<b>⏱️ Thời gian:</b> <code>${antilink.muteDuration / 60} phút</code>\n\n` +
+            '<b>╚══════════════════════════════╝</b>';
     }
 
     const keyboard = {

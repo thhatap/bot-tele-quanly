@@ -25,7 +25,13 @@ module.exports = (bot, { loadDB }) => {
 
             if (!adminMentions) return;
 
-            const alertText = `🚨 <b>YÊU CẦU HỖ TRỢ</b>\n\n${userMention} đang cần Admin giúp!\n\n👮 Đã gọi: ${adminMentions}`;
+            const alertText =
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🚨 YÊU CẦU HỖ TRỢ      <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n\n' +
+                `${userMention} đang cần Admin giúp!\n\n` +
+                `<b>👮 Đã gọi:</b> ${adminMentions}\n\n` +
+                '<b>╚══════════════════════════════╝</b>';
 
             await ctx.replyWithHTML(alertText, {
                 reply_markup: {

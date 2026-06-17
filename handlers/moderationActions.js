@@ -9,10 +9,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
             const admins = await ctx.getChatAdministrators(chatId);
             const isAdmin = admins.some(admin => admin.user.id === fromId);
             if (!isAdmin) {
-                return ctx.answerCbQuery('⛔ Bạn không có quyền thực hiện thao tác này!');
+                return ctx.answerCbQuery('⛔ Bạn không có quyền thực hiện thao tác này!', { show_alert: true });
             }
         } catch (e) {
-            return ctx.answerCbQuery('⚠️ Không thể kiểm tra quyền Admin!');
+            return ctx.answerCbQuery('⚠️ Không thể kiểm tra quyền Admin!', { show_alert: true });
         }
 
         let db = loadDB();
@@ -35,7 +35,7 @@ module.exports = (bot, { loadDB, saveDB }) => {
 
         if (action === 'unwarn') {
             if (!db[chatId].moderation.warns[targetUserId] || db[chatId].moderation.warns[targetUserId].length === 0) {
-                return ctx.answerCbQuery('ℹ️ Người dùng này hiện không có warn nào!');
+                return ctx.answerCbQuery('ℹ️ Người dùng này hiện không có warn nào!', { show_alert: true });
             }
 
             db[chatId].moderation.warns[targetUserId].pop();
@@ -43,7 +43,7 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 delete db[chatId].moderation.warns[targetUserId];
             }
             saveDB(db);
-            return ctx.answerCbQuery('✅ Đã gỡ 1 warn cuối cùng!');
+            return ctx.answerCbQuery('✅ Đã gỡ 1 warn cuối cùng!', { show_alert: true });
         }
 
         if (action === 'mute') {
@@ -57,10 +57,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 });
                 db[chatId].moderation.muted[targetUserId] = true;
                 saveDB(db);
-                return ctx.answerCbQuery('🔇 Đã mute người dùng!');
+                return ctx.answerCbQuery('🔇 Đã mute người dùng!', { show_alert: true });
             } catch (e) {
                 console.error('Mute callback error:', e.message);
-                return ctx.answerCbQuery('❌ Không thể mute người dùng này!');
+                return ctx.answerCbQuery('❌ Không thể mute người dùng này!', { show_alert: true });
             }
         }
 
@@ -77,10 +77,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
                     delete db[chatId].moderation.muted[targetUserId];
                 }
                 saveDB(db);
-                return ctx.answerCbQuery('🔊 Đã gỡ mute người dùng!');
+                return ctx.answerCbQuery('🔊 Đã gỡ mute người dùng!', { show_alert: true });
             } catch (e) {
                 console.error('Unmute callback error:', e.message);
-                return ctx.answerCbQuery('❌ Không thể gỡ mute người dùng này!');
+                return ctx.answerCbQuery('❌ Không thể gỡ mute người dùng này!', { show_alert: true });
             }
         }
     });

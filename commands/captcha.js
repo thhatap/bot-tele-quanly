@@ -1,7 +1,7 @@
 module.exports = (bot, { loadDB, saveDB }) => {
     bot.command('captcha', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply('⚠️ Lệnh này chỉ dùng được trong nhóm!');
+            return ctx.replyWithHTML('⚠️ <b>Lệnh này chỉ dùng được trong nhóm!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -16,7 +16,7 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 return ctx.deleteMessage().catch(() => {});
             }
         } catch (e) {
-            return ctx.reply('⚠️ Bot cần quyền Admin để sử dụng lệnh này!');
+            return ctx.replyWithHTML('⚠️ <b>Bot cần quyền Admin để sử dụng lệnh này!</b>');
         }
 
         ctx.deleteMessage().catch(() => {});
@@ -52,42 +52,71 @@ module.exports = (bot, { loadDB, saveDB }) => {
         if (cmd === 'on') {
             db[chatId].captcha.enabled = true;
             saveDB(db);
-            return ctx.replyWithHTML('✅ <b>ĐÃ BẬT</b> Captcha / Anti-Bot!');
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   ✅ BẬT CAPTCHA           <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                '<b>║</b> Captcha / Anti-Bot đã được kích hoạt! <b>║</b>\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
         if (cmd === 'off') {
             db[chatId].captcha.enabled = false;
             saveDB(db);
-            return ctx.replyWithHTML('🔴 <b>ĐÃ TẮT</b> Captcha / Anti-Bot!');
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔴 TẮT CAPTCHA          <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                '<b>║</b> Captcha / Anti-Bot đã bị tắt! <b>║</b>\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
         if (cmd === 'time') {
             const minutes = parseInt(args[2], 10);
             if (isNaN(minutes) || minutes < 1) {
-                return ctx.replyWithHTML('⚠️ Cách dùng: <code>/captcha time [phút]</code>');
+                return ctx.replyWithHTML('⚠️ <b>Cách dùng:</b> <code>/captcha time [phút]</code>');
             }
             db[chatId].captcha.kickAfter = minutes * 60;
             saveDB(db);
-            return ctx.replyWithHTML(`✅ Đã đặt thời gian xác minh là <b>${minutes} phút</b>!`);
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   ⏱️ ĐẶT THỜI GIAN        <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                `<b>║</b> Thời gian xác minh: <code>${minutes} phút</code> <b>║</b>\n` +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
         if (cmd === 'reset') {
             db[chatId].captcha.verified = {};
             saveDB(db);
-            return ctx.replyWithHTML('✅ Đã <b>RESET</b> danh sách đã xác minh!');
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔄 RESET CAPTCHA         <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                '<b>║</b> Đã reset danh sách đã xác minh! <b>║</b>\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
-        const status = db[chatId].captcha.enabled ? '🟢 ĐANG BẬT' : '🔴 ĐANG TẮT';
+        const status = db[chatId].captcha.enabled ? '🟢 BẬT' : '🔴 TẮT';
         const timeText = Math.floor(db[chatId].captcha.kickAfter / 60);
 
-        const helpText = `<blockquote><b>🔐 BẢNG ĐIỀU KHIỂN CAPTCHA / ANTI-BOT</b>\n` +
-            `Trạng thái: <b>${status}</b>\n〰️〰️〰️〰️〰️〰️\n` +
-            `🟢 <code>/captcha on</code> : Bật Captcha.\n` +
-            `🔴 <code>/captcha off</code> : Tắt Captcha.\n` +
-            `⏱️ <code>/captcha time [phút]</code> : Thời gian xác minh.\n` +
-            `🔄 <code>/captcha reset</code> : Reset danh sách đã xác minh.\n\n` +
-            `Cấu hình hiện tại:\n` +
-            `- Thời gian xác minh: <b>${timeText} phút</b></blockquote>`;
+        const helpText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   🔐 BẢNG ĐIỀU KHIỂN CAPTCHA <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>📌 Trạng thái:</b> <code>${status}</code>\n\n` +
+            '<b>═══ HƯỚNG DẪN ═══</b>\n' +
+            '<code>/captcha on</code> - Bật Captcha\n' +
+            '<code>/captcha off</code> - Tắt Captcha\n' +
+            '<code>/captcha time [phút]</code> - Thời gian xác minh\n' +
+            '<code>/captcha reset</code> - Reset danh sách đã xác minh\n\n' +
+            `<b>═══ CẤU HÌNH HIỆN TẠI ═══</b>\n` +
+            `<b>• Thời gian xác minh:</b> <code>${timeText} phút</code>\n\n` +
+            '<b>╚══════════════════════════════╝</b>';
 
         ctx.replyWithHTML(helpText);
     });

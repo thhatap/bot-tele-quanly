@@ -1,7 +1,7 @@
 module.exports = (bot, { loadDB }) => {
     bot.command('staff', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply('⚠️ Lệnh này chỉ dùng được trong nhóm!');
+            return ctx.replyWithHTML('⚠️ <b>Lệnh này chỉ dùng được trong nhóm!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -12,7 +12,7 @@ module.exports = (bot, { loadDB }) => {
             const isAdmin = admins.some(admin => admin.user.id === userId);
 
             if (isAdmin) {
-                return ctx.reply('⚠️ Mày đã là Admin rồi, gọi cái gì nữa?');
+                return ctx.replyWithHTML('⚠️ <b>Mày đã là Admin rồi, gọi cái gì nữa?</b>');
             }
 
             ctx.deleteMessage().catch(() => {});
@@ -26,12 +26,17 @@ module.exports = (bot, { loadDB }) => {
                 .join(' ');
 
             if (!adminMentions) {
-                return ctx.replyWithHTML('⚠️ Không tìm thấy Admin nào trong nhóm!');
+                return ctx.replyWithHTML('⚠️ <b>Không tìm thấy Admin nào trong nhóm!</b>');
             }
 
-            const alertText = messageText
-                ? `🚨 <b>YÊU CẦU HỖ TRỢ</b>\n\n${userMention} cần Admin giúp:\n\n📌 <i>"${messageText}"</i>\n\n👮 Đã gọi: ${adminMentions}`
-                : `🚨 <b>YÊU CẦU HỖ TRỢ</b>\n\n${userMention} đang cần Admin giúp!\n\n👮 Đã gọi: ${adminMentions}`;
+            const alertText =
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🚨 YÊU CẦU HỖ TRỢ         <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n\n' +
+                `${userMention} đang cần Admin giúp!\n\n` +
+                `📌 <i>"${messageText || 'Không có nội dung'}"</i>\n\n` +
+                `<b>👮 Đã gọi:</b> ${adminMentions}\n\n` +
+                '<b>╚══════════════════════════════╝</b>';
 
             const sent = await ctx.replyWithHTML(alertText, {
                 reply_markup: {
@@ -49,13 +54,13 @@ module.exports = (bot, { loadDB }) => {
 
         } catch (e) {
             console.error('Staff command error:', e.message);
-            return ctx.reply('⚠️ Không thể gọi Admin lúc này!');
+            return ctx.replyWithHTML('⚠️ <b>Không thể gọi Admin lúc này!</b>');
         }
     });
 
     bot.command('admin', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply('⚠️ Lệnh này chỉ dùng được trong nhóm!');
+            return ctx.replyWithHTML('⚠️ <b>Lệnh này chỉ dùng được trong nhóm!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -66,7 +71,7 @@ module.exports = (bot, { loadDB }) => {
             const isAdmin = admins.some(admin => admin.user.id === userId);
 
             if (isAdmin) {
-                return ctx.reply('⚠️ Mày đã là Admin rồi, gọi cái gì nữa?');
+                return ctx.replyWithHTML('⚠️ <b>Mày đã là Admin rồi, gọi cái gì nữa?</b>');
             }
 
             ctx.deleteMessage().catch(() => {});
@@ -80,12 +85,17 @@ module.exports = (bot, { loadDB }) => {
                 .join(' ');
 
             if (!adminMentions) {
-                return ctx.replyWithHTML('⚠️ Không tìm thấy Admin nào trong nhóm!');
+                return ctx.replyWithHTML('⚠️ <b>Không tìm thấy Admin nào trong nhóm!</b>');
             }
 
-            const alertText = messageText
-                ? `🚨 <b>YÊU CẦU HỖ TRỢ</b>\n\n${userMention} cần Admin giúp:\n\n📌 <i>"${messageText}"</i>\n\n👮 Đã gọi: ${adminMentions}`
-                : `🚨 <b>YÊU CẦU HỖ TRỢ</b>\n\n${userMention} đang cần Admin giúp!\n\n👮 Đã gọi: ${adminMentions}`;
+            const alertText =
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🚨 YÊU CẦU HỖ TRỢ         <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n\n' +
+                `${userMention} đang cần Admin giúp!\n\n` +
+                `📌 <i>"${messageText || 'Không có nội dung'}"</i>\n\n` +
+                `<b>👮 Đã gọi:</b> ${adminMentions}\n\n` +
+                '<b>╚══════════════════════════════╝</b>';
 
             const sent = await ctx.replyWithHTML(alertText, {
                 reply_markup: {
@@ -103,7 +113,7 @@ module.exports = (bot, { loadDB }) => {
 
         } catch (e) {
             console.error('Admin command error:', e.message);
-            return ctx.reply('⚠️ Không thể gọi Admin lúc này!');
+            return ctx.replyWithHTML('⚠️ <b>Không thể gọi Admin lúc này!</b>');
         }
     });
 };

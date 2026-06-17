@@ -38,11 +38,16 @@ module.exports = (bot, { loadDB, saveDB }) => {
             { text: '👤 Liên hệ Admin', url: 'https://t.me/username_cua_ban' }
         ]);
 
-        const welcomeText = `<b>👋 Xin chào, ${userName}!</b>\n\n` +
-            `Tôi là <b>Bot Quản Lý Nhóm</b> 🔧\n\n` +
-            `Dưới đây là danh sách các nhóm mà tôi đang quản lý:\n\n` +
-            `📋 <b>Tổng cộng:</b> ${groups.length} nhóm\n\n` +
-            `Nhấn vào nút bên dưới để tham gia nhóm!`;
+        const welcomeText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   👋 CHÀO MỪNG             <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>Xin chào, ${userName}!</b>\n\n` +
+            '<b>Tôi là Bot Quản Lý Nhóm</b> 🔧\n\n' +
+            'Dưới đây là danh sách các nhóm mà tôi đang quản lý:\n\n' +
+            `<b>📋 Tổng cộng:</b> <code>${groups.length}</code> nhóm\n\n` +
+            'Nhấn vào nút bên dưới để tham gia nhóm!\n\n' +
+            '<b>╚══════════════════════════════╝</b>';
 
         try {
             await ctx.replyWithHTML(welcomeText, {
@@ -90,8 +95,12 @@ module.exports = (bot, { loadDB, saveDB }) => {
             { text: '👤 Liên hệ Admin', url: 'https://t.me/username_cua_ban' }
         ]);
 
-        const refreshText = `<b>🔄 Đã cập nhật!</b>\n\n` +
-            `📋 <b>Tổng cộng:</b> ${groups.length} nhóm`;
+        const refreshText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   🔄 ĐÃ CẬP NHẬT         <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>📋 Tổng cộng:</b> <code>${groups.length}</code> nhóm\n\n` +
+            '<b>╚══════════════════════════════╝</b>';
 
         await ctx.editMessageText(refreshText, {
             parse_mode: 'HTML',

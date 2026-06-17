@@ -1,7 +1,7 @@
 module.exports = (bot, { loadDB, saveDB }) => {
     bot.command('warn', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply('⚠️ Lệnh này chỉ dùng được trong nhóm!');
+            return ctx.replyWithHTML('⚠️ <b>Lệnh này chỉ dùng được trong nhóm!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -13,10 +13,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
             const isAnonymous = ctx.message.sender_chat && ctx.message.sender_chat.id === ctx.chat.id;
 
             if (!isAdmin && !isAnonymous) {
-                return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+                return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
             }
         } catch (e) {
-            return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+            return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
         }
 
         let targetUserId = null;
@@ -38,12 +38,19 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 targetUserName = `ID: ${targetUserId}`;
                 reason = text.substring(text.indexOf(userIdMatch[0]) + userIdMatch[0].length).trim() || 'Không có lý do';
             } else {
-                return ctx.reply('⚠️ Cách dùng:\n/warn (reply tin nhắn) [lý do]\nhoặc\n/warn [user_id] [lý do]');
+                return ctx.replyWithHTML(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   ⚠️ CÁCH SỬ DỤNG LỆNH     <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n' +
+                    '<b>║</b> <code>/warn</code> (reply tin nhắn) [lý do] <b>║</b>\n' +
+                    '<b>║</b> <code>/warn</code> [user_id] [lý do] <b>║</b>\n' +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
             }
         }
 
         if (targetUserId === ctx.from.id) {
-            return ctx.reply('⚠️ Bạn không thể tự warn chính mình!');
+            return ctx.replyWithHTML('⚠️ <b>Bạn không thể tự warn chính mình!</b>');
         }
 
         let db = loadDB();
@@ -96,7 +103,14 @@ module.exports = (bot, { loadDB, saveDB }) => {
         saveDB(db);
 
         const userMention = `<a href="tg://user?id=${targetUserId}">${targetUserName}</a>`;
-        const warnMsg = `⚠️ <b>WARN</b>\n\n👤 Người dùng: ${userMention}\n📝 Lý do: ${reason}\n🔢 Số warn: <b>${warnCount + 1}/3</b>`;
+        const warnMsg =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   ⚠️ CẢNH CÁO (WARN)       <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>👤 Người dùng:</b> ${userMention}\n` +
+            `<b>📝 Lý do:</b> <i>${reason}</i>\n` +
+            `<b>🔢 Số warn:</b> <code>${warnCount + 1}/3</code>\n\n` +
+            '<b>╚══════════════════════════════╝</b>';
 
         const keyboard = {
             inline_keyboard: [
@@ -110,7 +124,13 @@ module.exports = (bot, { loadDB, saveDB }) => {
         await ctx.replyWithHTML(warnMsg, { reply_markup: keyboard });
 
         if (autoMuted) {
-            await ctx.replyWithHTML(`🔇 <b>ĐÃ MUTE VĨNH VIỄN</b>\n\nNgười dùng ${userMention} đã bị mute vì đạt 3 warns!`);
+            await ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔇 ĐÃ MUTE VĨNH VIỄN     <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n\n' +
+                `${userMention} đã bị mute vì đạt 3 warns!\n\n` +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
     });
 };

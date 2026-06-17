@@ -11,7 +11,14 @@ function scheduleCaptchaKick(bot, chatId, userId, userName, delaySeconds) {
     const timeout = setTimeout(async () => {
         try {
             await bot.telegram.banChatMember(chatId, userId);
-            await bot.telegram.sendMessage(chatId, `🔨 <b>ĐÃ XÓA THÀNH VIÊN</b>\n\n${userName} không xác minh Captcha trong thời gian quy định!`, { parse_mode: 'HTML' });
+            await bot.telegram.sendMessage(chatId,
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔨 ĐÃ XÓA THÀNH VIÊN   <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n\n' +
+                `${userName} không xác minh Captcha trong thời gian quy định!\n\n` +
+                '<b>╚══════════════════════════════╝</b>',
+                { parse_mode: 'HTML' }
+            );
         } catch (e) {
             console.error('Captcha kick error:', e.message);
         }
@@ -70,7 +77,7 @@ module.exports = {
             const fromId = ctx.from.id;
 
             if (fromId !== targetUserId) {
-                return ctx.answerCbQuery('⛔ Nút này không dành cho mày!');
+                return ctx.answerCbQuery('⛔ Nút này không dành cho mày!', { show_alert: true });
             }
 
             let db = loadDB();
@@ -106,7 +113,7 @@ module.exports = {
                 });
             } catch (e) {
                 console.error('Captcha unrestrict error:', e.message);
-                return ctx.answerCbQuery('❌ Không thể mở quyền chat!');
+                return ctx.answerCbQuery('❌ Không thể mở quyền chat!', { show_alert: true });
             }
 
             db[chatId].captcha.verified[targetUserId] = Date.now();
@@ -115,7 +122,7 @@ module.exports = {
             cancelCaptchaKick(chatId, targetUserId);
             await deleteCaptchaMessages(bot, chatId, targetUserId);
 
-            await ctx.answerCbQuery('✅ Xác minh thành công!');
+            await ctx.answerCbQuery('✅ Xác minh thành công!', { show_alert: true });
         });
 
         bot.on('message', async (ctx) => {

@@ -1,7 +1,7 @@
 module.exports = (bot, { loadDB, saveDB }) => {
     bot.command('welcome', async (ctx) => {
         if (ctx.chat.type === 'private') {
-            return ctx.reply("⚠️ Vui lòng thêm bot vào Group và gõ lệnh tại đó!");
+            return ctx.replyWithHTML('⚠️ <b>Vui lòng thêm bot vào Group và gõ lệnh tại đó!</b>');
         }
 
         const chatId = ctx.chat.id.toString();
@@ -13,10 +13,10 @@ module.exports = (bot, { loadDB, saveDB }) => {
             const isAnonymous = ctx.message.sender_chat && ctx.message.sender_chat.id === ctx.chat.id;
 
             if (!isAdmin && !isAnonymous) {
-                return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+                return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
             }
         } catch (e) {
-            return ctx.replyWithHTML('⛔ Yêu cầu là <b>ADMIN</b> để sử dụng lệnh này!', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
+            return ctx.replyWithHTML('⛔ <b>Yêu cầu là ADMIN để sử dụng lệnh này!</b>', { reply_to_message_id: ctx.message.message_id }).catch(() => {});
         }
 
         ctx.deleteMessage().catch(() => {});
@@ -42,13 +42,25 @@ module.exports = (bot, { loadDB, saveDB }) => {
         if (cmd === "on") {
             db[chatId].active = true;
             saveDB(db);
-            return ctx.replyWithHTML("✅ <b>ĐÃ BẬT</b> tự động Chào mừng!");
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   ✅ ĐÃ BẬT WELCOME          <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                '<b>║</b> Tự động chào mừng đã được kích hoạt! <b>║</b>\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
         if (cmd === "off") {
             db[chatId].active = false;
             saveDB(db);
-            return ctx.replyWithHTML("🔴 <b>ĐÃ TẮT</b> tự động Chào mừng!");
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   🔴 ĐÃ TẮT WELCOME         <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                '<b>║</b> Tự động chào mừng đã bị tắt! <b>║</b>\n' +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
         if (cmd === "captcha") {
@@ -63,40 +75,64 @@ module.exports = (bot, { loadDB, saveDB }) => {
             if (sub === "on") {
                 db[chatId].captcha.enabled = true;
                 saveDB(db);
-                return ctx.replyWithHTML("✅ Đã bật <b>Captcha kèm Welcome</b>!");
+                return ctx.replyWithHTML(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   ✅ BẬT CAPTCHA            <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n' +
+                    '<b>║</b> Captcha kèm Welcome đã được bật! <b>║</b>\n' +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
             }
 
             if (sub === "off") {
                 db[chatId].captcha.enabled = false;
                 saveDB(db);
-                return ctx.replyWithHTML("🔴 Đã tắt <b>Captcha kèm Welcome</b>!");
+                return ctx.replyWithHTML(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   🔴 TẮT CAPTCHA            <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n' +
+                    '<b>║</b> Captcha kèm Welcome đã bị tắt! <b>║</b>\n' +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
             }
 
-            return ctx.replyWithHTML("⚠️ Dùng: <code>/welcome captcha on</code> hoặc <code>/welcome captcha off</code>");
+            return ctx.replyWithHTML('⚠️ <b>Cách dùng:</b>\n<code>/welcome captcha on</code> hoặc <code>/welcome captcha off</code>');
         }
 
         if (cmd === "set") {
             const newText = text.substring(text.indexOf("set") + 3).trim();
             if (!newText) {
-                return ctx.replyWithHTML("⚠️ Thiếu nội dung! Ví dụ: <code>/welcome set Chào {name} nhé!</code>");
+                return ctx.replyWithHTML('⚠️ <b>Thiếu nội dung!</b>\nVí dụ: <code>/welcome set Chào {name} nhé!</code>');
             }
 
             db[chatId].text = newText;
             saveDB(db);
-            return ctx.replyWithHTML("✅ <b>ĐÃ ĐỔI CÂU CHÀO THÀNH CÔNG!</b>");
+            return ctx.replyWithHTML(
+                '<b>╔══════════════════════════════╗</b>\n' +
+                '<b>║</b>   ✅ ĐÃ ĐỔI CÂU CHÀO        <b>║</b>\n' +
+                '<b>╠══════════════════════════════╣</b>\n' +
+                `<b>║</b> Câu chào mới: <i>${newText}</i> <b>║</b>\n` +
+                '<b>╚══════════════════════════════╝</b>'
+            );
         }
 
         const statusStr = db[chatId].active ? "🟢 ĐANG BẬT" : "🔴 ĐANG TẮT";
         const captchaStatus = db[chatId].captcha && db[chatId].captcha.enabled ? "🟢 BẬT" : "🔴 TẮT";
 
-        const helpText = `<blockquote><b>⚙️ BẢNG ĐIỀU KHIỂN LỄ TÂN</b>\n` +
-            `Trạng thái nhóm: <b>${statusStr}</b>\n` +
-            `Captcha kèm theo: <b>${captchaStatus}</b>\n〰️〰️〰️〰️〰️〰️\n` +
-            `🟢 <code>/welcome on</code> : Bật máy.\n` +
-            `🔴 <code>/welcome off</code> : Tắt máy.\n` +
-            `🔐 <code>/welcome captcha on|off</code> : Bật/tắt captcha.\n` +
-            `📝 <code>/welcome set [Nội dung]</code> : Đổi câu chào.\n\n` +
-            `<i>Câu chào hiện tại:</i>\n${db[chatId].text}</blockquote>`;
+        const helpText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   ⚙️ BẢNG ĐIỀU KHIỂN LỄ TÂN  <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>📌 Trạng thái:</b> <code>${statusStr}</code>\n` +
+            `<b>🔐 Captcha:</b> <code>${captchaStatus}</code>\n` +
+            '<b>═══ HƯỚNG DẪN ═══</b>\n' +
+            '<code>/welcome on</code> - Bật máy\n' +
+            '<code>/welcome off</code> - Tắt máy\n' +
+            '<code>/welcome captcha on|off</code> - Bật/tắt captcha\n' +
+            '<code>/welcome set [Nội dung]</code> - Đổi câu chào\n\n' +
+            '<b>═══ CÂU CHÀO HIỆN TẠI ═══</b>\n' +
+            `<i>${db[chatId].text}</i>\n\n` +
+            '<b>╚══════════════════════════════╝</b>';
 
         ctx.replyWithHTML(helpText);
     });

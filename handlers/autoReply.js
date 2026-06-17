@@ -12,7 +12,13 @@ module.exports = (bot, { loadDB }) => {
 
         for (const keyword in rules) {
             if (text.includes(keyword.toLowerCase())) {
-                await ctx.reply(rules[keyword]);
+                await ctx.reply(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   💬 AUTO REPLY           <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n\n' +
+                    `${rules[keyword]}\n\n` +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
                 break;
             }
         }

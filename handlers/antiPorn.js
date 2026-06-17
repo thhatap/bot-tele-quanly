@@ -80,16 +80,28 @@ module.exports = (bot, { loadDB, saveDB }) => {
                 });
                 db[chatId].moderation.muted[fromId] = true;
                 saveDB(db);
-                await ctx.replyWithHTML(`🔇 <b>ĐÃ MUTE VĨNH VIỄN</b>\n\nNgười dùng <a href="tg://user?id=${fromId}">${ctx.from.first_name || ctx.from.username || 'Người dùng'}</a> đã bị mute vì đạt 3 warns (Anti-Porn)!`);
+                const userMention = `<a href="tg://user?id=${fromId}">${ctx.from.first_name || ctx.from.username || 'Người dùng'}</a>`;
+                await ctx.replyWithHTML(
+                    '<b>╔══════════════════════════════╗</b>\n' +
+                    '<b>║</b>   🔇 ĐÃ MUTE VĨNH VIỄN     <b>║</b>\n' +
+                    '<b>╠══════════════════════════════╣</b>\n\n' +
+                    `${userMention} đã bị mute vì đạt 3 warns (Anti-Porn)!\n\n` +
+                    '<b>╚══════════════════════════════╝</b>'
+                );
             } catch (e) {
                 console.error('Anti-porn mute error:', e.message);
             }
         }
 
-        const replyText = `🔞 <b>ANTI-PORNOGRAPHY</b>\n\n` +
-            `👤 Người dùng: <a href="tg://user?id=${fromId}">${ctx.from.first_name || ctx.from.username || 'Người dùng'}</a>\n` +
-            `📝 Lý do: Gửi nội dung nhạy cảm\n` +
-            `🔢 Warn: <b>${warnCount}/3</b>`;
+        const userMention = `<a href="tg://user?id=${fromId}">${ctx.from.first_name || ctx.from.username || 'Người dùng'}</a>`;
+        const replyText =
+            '<b>╔══════════════════════════════╗</b>\n' +
+            '<b>║</b>   🔞 ANTI-PORNOGRAPHY     <b>║</b>\n' +
+            '<b>╠══════════════════════════════╣</b>\n\n' +
+            `<b>👤 Người dùng:</b> ${userMention}\n` +
+            '<b>📝 Lý do:</b> Gửi nội dung nhạy cảm\n' +
+            `<b>🔢 Warn:</b> <code>${warnCount}/3</code>\n\n` +
+            '<b>╚══════════════════════════════╝</b>';
 
         const keyboard = {
             inline_keyboard: [
